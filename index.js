@@ -16,17 +16,29 @@ passport.use( strategy );
 
 
 passport.serializeUser(function(user, done) {
-    done(null, { id: user.id, display: user.displayName, nickname: user.nickname, email: user.emails[0].value });
+    var userInfo = {
+        id: user.id, 
+        displayName: user.displayName,
+        nickname: user.nickname,
+        email: user.email
+    }
+
+    done(null, userInfo)
+
+    // done(null, { id: user.id, display: user.displayName, nickname: user.nickname, email: user.emails[0].value });
   });
   
-  passport.deserializeUser(function(obj, done) {
-    done(null, obj);
+  passport.deserializeUser(function(user, done) {
+    done(null, user);
   });
+
+
 
 app.get( '/login', 
   passport.authenticate('auth0', 
-    { successRedirect: '/me', failureRedirect: '/login', failureFlash: true }
+    { successRedirect: '/me', failureRedirect: '/', failureFlash: true }
   )
+  //failureFlash: Allows auth0 to flash an errer message to the message and explained why it failed. 
 );
 
 app.get('/me', ( req, res, next) => {
